@@ -17,7 +17,7 @@ class App extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children:[
               OrderItemDisplay(5, 'Footlong'),
-              OrderItemDisplay(3, 'Club'),
+              OrderItemDisplay(3, 'BLT'),
               OrderItemDisplay(2, 'Veggie'),
             ],
           ),
