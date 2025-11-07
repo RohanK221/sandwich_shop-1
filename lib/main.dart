@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-void main() {runApp(const App());}
+void main() {
+  runApp(const App());
+}
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -12,15 +14,7 @@ class App extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Sandwich Counter')),
         body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children:[
-              OrderItemDisplay(5, 'Footlong'),
-              OrderItemDisplay(3, 'BLT'),
-              OrderItemDisplay(2, 'Veggie'),
-            ],
-          ),
+          child: OrderItemDisplay(5, 'Footlong'),
         ),
       ),
     );
@@ -28,23 +22,14 @@ class App extends StatelessWidget {
 }
 
 class OrderItemDisplay extends StatelessWidget {
-  final String itemType;
   final int quantity;
+  final String itemType;
 
   const OrderItemDisplay(this.quantity, this.itemType, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.all(10.0),
-        color: Colors.blue[600],
-        width: 100,
-        height: 100,
-        alignment: Alignment.center,
-        child: Text('$quantity $itemType sandwich(es): ${'🥪' * quantity}', textAlign: TextAlign.center),
-        ),
-      );
+    return Text('$quantity $itemType sandwich(es): ${'🥪' * quantity}');
   }
 }
 //   runApp(const MyApp());
