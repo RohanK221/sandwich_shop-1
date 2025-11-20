@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sandwich_shop/views/app_styles.dart';
 import 'package:sandwich_shop/repositories/order_repository.dart';
+import 'package:sandwich_shop/repositories/pricing_repository.dart';
 
 enum BreadType { white, wheat, wholemeal }
 
@@ -37,6 +38,7 @@ class _OrderScreenState extends State<OrderScreen> {
   bool _isFootlong = true;
   BreadType _selectedBreadType = BreadType.white;
   bool _isToasted = false;
+  final PricingRepository _pricingRepository = PricingRepository(); // Instantiate PricingRepository
 
   @override
   void initState() {
@@ -92,6 +94,10 @@ class _OrderScreenState extends State<OrderScreen> {
     return entries;
   }
 
+  double _calculateTotalPrice() {
+    return _pricingRepository.getPrice(isFootlong: _isFootlong, quantity: _quantity);
+  }
+
   @override
   Widget build(BuildContext context) {
     String sandwichType = 'footlong';
@@ -122,6 +128,11 @@ class _OrderScreenState extends State<OrderScreen> {
               itemType: sandwichType,
               breadType: _selectedBreadType,
               orderNote: noteForDisplay,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Total Price: \$${_calculateTotalPrice().toStringAsFixed(2)}', // Display total price
+              style: normalText,
             ),
             const SizedBox(height: 20),
             Row(
