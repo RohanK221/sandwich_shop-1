@@ -112,6 +112,13 @@ class _OrderScreenState extends State<OrderScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 500,
+        leadingWidth: 500,
+        leading: SizedBox(
+          child: Image.asset('assets/images/logo.png',
+          fit: BoxFit.contain,
+        ), // Changed to relative path
+      ),
         title: const Text(
           'Sandwich Counter',
           style: heading1,
