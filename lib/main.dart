@@ -33,16 +33,17 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  int _quantity = 0;
+  late final OrderRepository _orderRepository;
   final TextEditingController _notesController = TextEditingController();
   bool _isFootlong = true;
   BreadType _selectedBreadType = BreadType.white;
-  bool _isToasted = false;
-  final PricingRepository _pricingRepository = PricingRepository(); // Instantiate PricingRepository
+  late final PricingRepository _pricingRepository;
 
   @override
   void initState() {
     super.initState();
+    _orderRepository = OrderRepository(maxQuantity: widget.maxQuantity);
+    _pricingRepository = PricingRepository();
     _notesController.addListener(() {
       setState(() {});
     });
@@ -55,19 +56,15 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   VoidCallback? _getIncreaseCallback() {
-    if (_quantity < widget.maxQuantity) {
-      return () {
-        setState(() => _quantity++);
-      };
+    if (_orderRepository.canIncrement) {
+      return () => setState(_orderRepository.increment);
     }
     return null;
   }
 
   VoidCallback? _getDecreaseCallback() {
-    if (_quantity > 0) {
-      return () {
-        setState(() => _quantity--);
-      };
+    if (_orderRepository.canDecrement) {
+      return () => setState(_orderRepository.decrement);
     }
     return null;
   }
@@ -94,12 +91,13 @@ class _OrderScreenState extends State<OrderScreen> {
     return entries;
   }
 
-  double _calculateTotalPrice() {
-    return _pricingRepository.getPrice(isFootlong: _isFootlong, quantity: _quantity);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final double totalPrice = _pricingRepository.calculatePrice(
+      quantity: _orderRepository.quantity,
+      isFootlong: _isFootlong,
+    );
+
     String sandwichType = 'footlong';
     if (!_isFootlong) {
       sandwichType = 'six-inch';
@@ -124,15 +122,15 @@ class _OrderScreenState extends State<OrderScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             OrderItemDisplay(
-              quantity: _quantity,
+              quantity: _orderRepository.quantity,
               itemType: sandwichType,
               breadType: _selectedBreadType,
               orderNote: noteForDisplay,
             ),
             const SizedBox(height: 20),
             Text(
-              'Total Price: \$${_calculateTotalPrice().toStringAsFixed(2)}', // Display total price
-              style: normalText,
+              'Total Price: £${totalPrice.toStringAsFixed(2)}',
+              style: heading2,
             ),
             const SizedBox(height: 20),
             Row(
@@ -140,7 +138,6 @@ class _OrderScreenState extends State<OrderScreen> {
               children: [
                 const Text('six-inch', style: normalText),
                 Switch(
-                  key: const Key('sandwich_type_switch'),
                   value: _isFootlong,
                   onChanged: _onSandwichTypeChanged,
                 ),
@@ -182,20 +179,6 @@ class _OrderScreenState extends State<OrderScreen> {
                   label: 'Remove',
                   backgroundColor: Colors.red,
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('untoasted', style: normalText),
-                Switch(
-                  key: const Key('toasted_switch'),
-                  value: _isToasted,
-                  onChanged: (value) {
-                    setState(() => _isToasted = value);
-                  },
-                ),
-                const Text('toasted', style: normalText),
               ],
             ),
           ],
